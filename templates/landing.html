@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Tavolò — Il Progetto{% endblock %}
+
+{% block extra_css %}
+<style>
+    .landing-hero {
+        text-align: center;
+        padding: 3rem 1rem 2rem;
+    }
+    .landing-hero h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.6rem;
+        color: var(--nero);
+        margin-bottom: 0.6rem;
+    }
+    .landing-hero p {
+        font-size: 1.1rem;
+        color: var(--grigio-scuro);
+        max-width: 640px;
+        margin: 0 auto;
+    }
+    .landing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+    .plan-card {
+        background: var(--bianco);
+        border-radius: var(--raggio);
+        box-shadow: var(--ombra);
+        padding: 2rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        transition: var(--transizione);
+        border-top: 4px solid var(--rosso);
+    }
+    .plan-card:hover {
+        box-shadow: var(--ombra-hover);
+        transform: translateY(-4px);
+    }
+    .plan-card.gold {
+        border-top-color: #c8a24b;
+        background: linear-gradient(180deg, #fffaf0 0%, var(--bianco) 60%);
+    }
+    .plan-icon {
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+    }
+    .plan-card h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.4rem;
+        color: var(--nero);
+        margin-bottom: 0.4rem;
+    }
+    .plan-tag {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 0.2rem 0.6rem;
+        border-radius: 50px;
+        margin-bottom: 0.8rem;
+    }
+    .plan-tag.free { background: #E8F5E9; color: #2E7D32; }
+    .plan-tag.support { background: #E3F2FD; color: #1565C0; }
+    .plan-tag.gold { background: #fff4d6; color: #8a6a1f; }
+    .plan-card ul {
+        list-style: none;
+        margin: 0.8rem 0 1.5rem;
+        padding: 0;
+        flex: 1;
+    }
+    .plan-card li {
+        padding: 0.4rem 0;
+        font-size: 0.95rem;
+        color: var(--grigio-scuro);
+        border-bottom: 1px dashed var(--grigio-chiaro);
+    }
+    .plan-card li:last-child { border-bottom: none; }
+    .plan-card li::before {
+        content: "✓";
+        color: var(--rosso);
+        font-weight: 700;
+        margin-right: 0.5rem;
+    }
+    .plan-card.gold li::before { color: #c8a24b; }
+    .plan-cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        padding: 0.75rem 1.25rem;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: var(--transizione);
+        text-align: center;
+    }
+    .plan-cta.free { background: var(--grigio-scuro); color: var(--bianco); }
+    .plan-cta.free:hover { background: var(--nero); transform: translateY(-1px); }
+    .plan-cta.support { background: var(--rosso); color: var(--bianco); }
+    .plan-cta.support:hover { background: var(--rosso-scuro); transform: translateY(-1px); }
+    .plan-cta.gold { background: #c8a24b; color: var(--bianco); }
+    .plan-cta.gold:hover { background: #a8862e; transform: translateY(-1px); }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="landing-hero">
+    <h1>Tavolò</h1>
+    <p>Gestione menu, tavoli e ordini per il tuo ristorante. Open source, leggero, pronto all'uso.</p>
+</section>
+
+<section class="landing-grid">
+    <div class="plan-card">
+        <div class="plan-icon">🆓</div>
+        <span class="plan-tag free">Open Source</span>
+        <h2>Versione Free</h2>
+        <ul>
+            <li>Codice distribuito gratuitamente</li>
+            <li>Menu pubblico e ordini da QR</li>
+            <li>Fino a {{ MAX_MENU_ITEMS }} piatti, {{ MAX_CATEGORIES }} categorie, {{ MAX_TABLES }} tavoli</li>
+            <li>Self-hosting su tua infrastruttura</li>
+        </ul>
+        <a href="https://github.com/pywis/tavolo_svil_free2" class="plan-cta free" target="_blank" rel="noopener">
+            Scarica da Git ↗
+        </a>
+    </div>
+
+    <div class="plan-card">
+        <div class="plan-icon">🛠️</div>
+        <span class="plan-tag support">A pagamento</span>
+        <h2>Assistenza</h2>
+        <ul>
+            <li>Installazione e configurazione</li>
+            <li>Personalizzazioni e integrazioni</li>
+            <li>Supporto tecnico dedicato</li>
+            <li>Formazione del personale</li>
+        </ul>
+        <a href="https://github.com/pywis/tavolo_svil_free2/issues" class="plan-cta support" target="_blank" rel="noopener">
+            Richiedi assistenza ↗
+        </a>
+    </div>
+
+    <div class="plan-card gold">
+        <div class="plan-icon">⭐</div>
+        <span class="plan-tag gold">Premium</span>
+        <h2>Versione Gold</h2>
+        <ul>
+            <li>Limiti rimossi su piatti, tavoli e utenti</li>
+            <li>Funzionalità avanzate per ordini e statistiche</li>
+            <li>Aggiornamenti prioritari</li>
+            <li>Supporto premium incluso</li>
+        </ul>
+        <a href="https://github.com/pywis/tavolo_svil_free2/releases" class="plan-cta gold" target="_blank" rel="noopener">
+            Acquista Gold ↗
+        </a>
+    </div>
+</section>
+{% endblock %}
