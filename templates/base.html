@@ -59,7 +59,14 @@
             align-items: center;
             gap: 0.5rem;
         }
-        .navbar-logo { height: 36px; width: auto; }
+        .navbar-logo {
+            height: 44px;
+            width: auto;
+            background: var(--bianco);
+            padding: 4px 8px;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+        }
         .navbar-nav {
             display: flex;
             align-items: center;
@@ -406,11 +413,12 @@
 <body>
     <nav class="navbar">
         <a href="{{ url_for('index') }}" class="navbar-brand">
-            <img src="{{ url_for('static', filename='img/LogoApp.svg') }}" alt="Logo" class="navbar-logo" style="width: 100px; height: auto;"> Tavolò
+            <img src="{{ url_for('static', filename='img/LogoApp.svg') }}" alt="Logo" class="navbar-logo"> Tavolò
         </a>
         <button class="nav-toggle" onclick="document.querySelector('.navbar-nav').classList.toggle('open')">☰</button>
         <ul class="navbar-nav">
             <li><a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' }}">Menu Pubblico</a></li>
+            <li><a href="{{ url_for('landing') }}" class="{{ 'active' if request.endpoint == 'landing' }}">Progetto</a></li>
             {% if current_user %}
                 <li><a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}">Dashboard</a></li>
                 <li><a href="{{ url_for('categories_list') }}" class="{{ 'active' if 'categor' in request.endpoint }}">Categorie</a></li>

@@ -364,6 +364,11 @@ def index():
             items_by_cat[cat["id"]] = items
     return render_template("public_menu.html", categories=categories, items_by_cat=items_by_cat)
 
+@app.route("/progetto")
+def landing():
+    """Landing page del progetto: versione free, assistenza, versione gold."""
+    return render_template("landing.html")
+
 # ─── Auth Routes ─────────────────────────────────────────────────────────────
 
 @app.route("/login", methods=["GET", "POST"])
