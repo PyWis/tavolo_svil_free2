@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Categorie{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Categorie Menu</h1>
+    <a href="{{ url_for('category_create') }}" class="btn btn-primary">+ Nuova Categoria</a>
+</div>
+
+{% if categories %}
+<div class="card">
+    <div class="card-header">Tutte le Categorie</div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Piatti</th>
+                        <th>Ordine</th>
+                        <th style="text-align:right;">Azioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for cat in categories %}
+                    <tr>
+                        <td><strong>{{ cat.name }}</strong></td>
+                        <td>{{ cat.item_count }}</td>
+                        <td class="text-muted">{{ cat.sort_order }}</td>
+                        <td style="text-align:right;">
+                            <a href="{{ url_for('category_edit', cid=cat.id) }}" class="btn btn-sm btn-secondary">Modifica</a>
+                            <form method="POST" action="{{ url_for('category_delete', cid=cat.id) }}" class="confirm-form">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Eliminare la categoria e tutti i piatti associati?')">Elimina</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body">
+        <div class="empty-state">
+            <div class="icon">📂</div>
+            <p>Nessuna categoria creata.</p>
+            <a href="{{ url_for('category_create') }}" class="btn btn-primary">Crea la prima categoria</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Modifica Tavolo' if table else 'Nuovo Tavolo' }} — Tavolò{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ 'Modifica Tavolo ' ~ table.number if table else 'Nuovo Tavolo' }}</h1>
+</div>
+
+<div class="card">
+    <div class="card-header">{{ 'Modifica Tavolo' if table else 'Crea Tavolo' }}</div>
+    <div class="card-body">
+        <form method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            {% if not table %}
+            <div class="form-group">
+                <label for="number">Numero Tavolo (1-99)</label>
+                <input type="number" id="number" name="number" class="form-control" min="1" max="99" required>
+            </div>
+            {% endif %}
+            <div class="form-group">
+                <label for="name">Nome / Descrizione (opzionale)</label>
+                <input type="text" id="name" name="name" class="form-control"
+                       value="{{ table.name or '' if table else '' }}"
+                       placeholder="es. Terrazza, Sala VIP, Giardino...">
+            </div>
+            {% if table %}
+            <div class="form-group">
+                <div class="form-check">
+                    <input type="checkbox" id="active" name="active" {{ 'checked' if table.active }}>
+                    <label for="active" style="text-transform:none; font-size:1rem;">Tavolo attivo</label>
+                </div>
+            </div>
+            {% endif %}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">{{ 'Aggiorna' if table else 'Crea Tavolo' }}</button>
+                <a href="{{ url_for('tables_list') }}" class="btn btn-secondary">Annulla</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

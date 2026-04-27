@@ -1,0 +1,12 @@
+__pycache__/
+static/uploads/dishes/*
+!static/uploads/dishes/.gitkeep
+
+# Dati runtime — non devono essere distribuiti
+restaurant.db
+restaurant.db-journal
+restaurant.db-wal
+restaurant.db-shm
+archives/
+.secret_key
+.env

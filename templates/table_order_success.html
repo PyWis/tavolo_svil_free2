@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Ordine Confermato — Tavolo {{ table.number }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .success-page {
+        text-align: center;
+        padding: 3rem 1rem;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    .success-icon {
+        font-size: 5rem;
+        margin-bottom: 1rem;
+        animation: popIn 0.5s ease;
+    }
+    @keyframes popIn {
+        0% { transform: scale(0); opacity: 0; }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    .success-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        color: #2E7D32;
+        margin-bottom: 0.5rem;
+    }
+    .success-subtitle {
+        font-size: 1.1rem;
+        color: var(--grigio-scuro);
+        margin-bottom: 0.5rem;
+    }
+    .order-number {
+        display: inline-block;
+        background: #E8F5E9;
+        color: #2E7D32;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 1rem 0;
+    }
+    .success-message {
+        color: var(--grigio);
+        font-size: 0.95rem;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="success-page">
+    <div class="success-icon">✅</div>
+    <h1 class="success-title">Ordine Inviato!</h1>
+    <p class="success-subtitle">Tavolo {{ table.number }}{% if table.name %} — {{ table.name }}{% endif %}</p>
+    <div class="order-number">Ordine #{{ order_id }}</div>
+    <p class="success-message">
+        Il tuo ordine è stato ricevuto dalla cucina.<br>
+        Il personale ti servirà appena pronto.
+    </p>
+    <a href="{{ url_for('table_order', number=table.number) }}" class="btn btn-primary" style="font-size:1rem; padding:0.75rem 2rem;">
+        Ordina ancora
+    </a>
+</div>
+{% endblock %}

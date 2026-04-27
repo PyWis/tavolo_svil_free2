@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Accedi — Tavolò{% endblock %}
+
+{% block extra_css %}
+<style>
+    .login-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 200px);
+    }
+    .login-card {
+        width: 100%;
+        max-width: 420px;
+    }
+    .login-card .card-header {
+        text-align: center;
+        padding: 2rem;
+        font-size: 1.4rem;
+    }
+    .login-card .card-body {
+        padding: 2rem;
+    }
+    .login-icon {
+        font-size: 2.5rem;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="card login-card">
+        <div class="card-header" style="flex-direction:column;">
+            <span class="login-icon">🔐</span>
+            Area Riservata
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" class="form-control" required autofocus placeholder="Il tuo username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" required placeholder="La tua password">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:0.85rem; font-size:1rem;">
+                    Accedi
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

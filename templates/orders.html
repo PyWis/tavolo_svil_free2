@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% block title %}Ordini — Tavolò{% endblock %}
+
+{% block extra_css %}
+<style>
+    .status-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+    .status-tab {
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transizione);
+        border: 2px solid var(--grigio-chiaro);
+        color: var(--grigio-scuro);
+    }
+    .status-tab:hover { border-color: var(--rosso); color: var(--rosso); }
+    .status-tab.active { background: var(--rosso); color: var(--bianco); border-color: var(--rosso); }
+
+    .order-card {
+        background: var(--bianco);
+        border-radius: var(--raggio);
+        box-shadow: var(--ombra);
+        margin-bottom: 1.25rem;
+        overflow: hidden;
+        transition: var(--transizione);
+    }
+    .order-card:hover { box-shadow: var(--ombra-hover); }
+    .order-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        background: var(--grigio-chiaro);
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .order-id {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--rosso);
+    }
+    .order-meta {
+        font-size: 0.8rem;
+        color: var(--grigio);
+    }
+    .order-body { padding: 1rem 1.25rem; }
+    .order-item-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.4rem 0;
+        border-bottom: 1px solid var(--grigio-chiaro);
+    }
+    .order-item-row:last-child { border-bottom: none; }
+    .order-item-name { font-weight: 600; }
+    .order-item-qty { color: var(--grigio); font-size: 0.85rem; }
+    .order-item-note {
+        font-size: 0.8rem;
+        color: var(--grigio);
+        font-style: italic;
+        margin-left: 1rem;
+    }
+    .order-total {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0 0;
+        margin-top: 0.5rem;
+        border-top: 2px solid var(--grigio-chiaro);
+        font-weight: 700;
+    }
+    .order-total .price { font-size: 1.1rem; }
+    .order-notes-text {
+        background: #FFF3E0;
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        color: #E65100;
+        margin-top: 0.75rem;
+    }
+    .order-footer {
+        padding: 0.75rem 1.25rem;
+        background: var(--grigio-chiaro);
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+    }
+    .status-btn {
+        padding: 0.35rem 0.75rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: 'Lato', sans-serif;
+        transition: var(--transizione);
+    }
+    .status-btn.confirmed { background: #E3F2FD; color: #1565C0; }
+    .status-btn.preparing { background: #FFF3E0; color: #E65100; }
+    .status-btn.ready { background: #E8F5E9; color: #2E7D32; }
+    .status-btn.completed { background: #F3E5F5; color: #7B1FA2; }
+    .status-btn.cancelled { background: #FFEBEE; color: #C62828; }
+    .status-btn:hover { opacity: 0.8; }
+
+    .badge-pending { background: #FFF3E0; color: #E65100; }
+    .badge-confirmed { background: #E3F2FD; color: #1565C0; }
+    .badge-preparing { background: #FFF8E1; color: #F57F17; }
+    .badge-ready { background: #E8F5E9; color: #2E7D32; }
+    .badge-completed { background: #F3E5F5; color: #7B1FA2; }
+    .badge-cancelled { background: #FFEBEE; color: #C62828; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Ordini</h1>
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <a href="{{ url_for('tables_list') }}" class="btn btn-secondary">Tavoli</a>
+        {% if current_user.role == 'admin' %}
+        <form action="{{ url_for('orders_archive_daily') }}" method="post"
+              onsubmit="return confirm('Archiviare tutti gli ordini in un CSV sul server e cancellarli dal database?');"
+              style="display:inline;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-danger">🗄 Archiviazione Giornaliera</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<div class="status-tabs">
+    {% for s in ['pending', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled', 'all'] %}
+    <a href="{{ url_for('orders_list', status=s) }}"
+       class="status-tab {{ 'active' if current_status == s }}">
+        {{ s|status_it }}
+    </a>
+    {% endfor %}
+</div>
+
+{% if orders %}
+    {% for o in orders %}
+    <div class="order-card">
+        <div class="order-header">
+            <div>
+                <span class="order-id">Ordine #{{ o.order.id }}</span>
+                <span class="badge badge-{{ o.order.status }}">{{ o.order.status|status_it }}</span>
+            </div>
+            <div style="text-align:right;">
+                <div style="font-weight:700;">Tavolo {{ o.order.table_number }}{% if o.order.table_name %} ({{ o.order.table_name }}){% endif %}</div>
+                <div class="order-meta">{{ o.order.created_at }}</div>
+            </div>
+        </div>
+        <div class="order-body">
+            {% for item in o.order_items %}
+            <div class="order-item-row">
+                <div>
+                    <span class="order-item-name">{{ item.title }}</span>
+                    <span class="order-item-qty">x{{ item.quantity }}</span>
+                    {% if item.notes %}
+                        <span class="order-item-note">{{ item.notes }}</span>
+                    {% endif %}
+                </div>
+                <div class="price">&euro; {{ "%.2f"|format(item.price * item.quantity) }}</div>
+            </div>
+            {% endfor %}
+            <div class="order-total">
+                <span>Totale</span>
+                <span class="price">&euro; {{ "%.2f"|format(o.total) }}</span>
+            </div>
+            {% if o.order.notes %}
+                <div class="order-notes-text">{{ o.order.notes }}</div>
+            {% endif %}
+        </div>
+        <div class="order-footer">
+            {% for s in ['confirmed', 'preparing', 'ready', 'completed', 'cancelled'] %}
+                {% if s != o.order.status %}
+                <form action="{{ url_for('order_update_status', oid=o.order.id, status=current_status) }}" method="post" style="display:inline;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="status" value="{{ s }}">
+                    <button class="status-btn {{ s }}">{{ s|status_it }}</button>
+                </form>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+<div class="empty-state">
+    <div class="icon">📋</div>
+    <p>Nessun ordine{% if current_status != 'all' %} nello stato "{{ current_status|status_it }}"{% endif %}.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Tavoli — Tavolò{% endblock %}
+
+{% block extra_css %}
+<style>
+    .table-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.25rem;
+        margin-top: 1rem;
+    }
+    .table-card {
+        background: var(--bianco);
+        border-radius: var(--raggio);
+        box-shadow: var(--ombra);
+        overflow: hidden;
+        transition: var(--transizione);
+        border-top: 4px solid var(--rosso);
+        position: relative;
+    }
+    .table-card:hover { box-shadow: var(--ombra-hover); transform: translateY(-2px); }
+    .table-card.inactive { border-top-color: var(--grigio); opacity: 0.7; }
+    .table-card-body { padding: 1.25rem; text-align: center; }
+    .table-number {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--rosso);
+    }
+    .table-card.inactive .table-number { color: var(--grigio); }
+    .table-name {
+        font-size: 0.9rem;
+        color: var(--grigio-scuro);
+        margin-top: 0.25rem;
+    }
+    .table-status {
+        margin-top: 0.5rem;
+    }
+    .table-qr {
+        display: block;
+        margin: 0.75rem auto;
+        border-radius: 8px;
+        border: 2px solid var(--grigio-chiaro);
+    }
+    .table-actions {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        padding: 0 1.25rem 1.25rem;
+    }
+    .table-link {
+        font-size: 0.8rem;
+        color: var(--grigio);
+        word-break: break-all;
+        margin-top: 0.5rem;
+    }
+    .table-link a { color: var(--rosso); text-decoration: none; }
+    .table-link a:hover { text-decoration: underline; }
+    .order-badge {
+        display: inline-block;
+        background: var(--rosso);
+        color: var(--bianco);
+        border-radius: 50px;
+        padding: 0.15rem 0.6rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Gestione Tavoli</h1>
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <a href="{{ url_for('table_create') }}" class="btn btn-primary">+ Nuovo Tavolo</a>
+        <a href="{{ url_for('tables_qr_all') }}" class="btn btn-outline">Stampa QR</a>
+        <a href="{{ url_for('orders_list') }}" class="btn btn-secondary">Ordini</a>
+    </div>
+</div>
+
+{% if tables %}
+<div class="table-grid">
+    {% for t in tables %}
+    <div class="table-card {{ 'inactive' if not t.active }}">
+        <div class="table-card-body">
+            <div class="table-number">{{ t.number }}</div>
+            {% if t.name %}
+                <div class="table-name">{{ t.name }}</div>
+            {% endif %}
+            <div class="table-status">
+                {% if t.active %}
+                    <span class="badge badge-visible">Attivo</span>
+                {% else %}
+                    <span class="badge badge-hidden">Disattivo</span>
+                {% endif %}
+                {% if t.order_count > 0 %}
+                    <span class="order-badge">{{ t.order_count }} ordini</span>
+                {% endif %}
+            </div>
+            <img src="{{ url_for('table_qr', tid=t.id) }}" alt="QR Tavolo {{ t.number }}" class="table-qr" width="140" height="140">
+            <div class="table-link">
+                <a href="{{ url_for('table_order', number=t.number) }}" target="_blank">/tavolo/{{ t.number }}</a>
+            </div>
+        </div>
+        <div class="table-actions">
+            <a href="{{ url_for('table_qr', tid=t.id) }}" download="tavolo_{{ t.number }}_qr.png" class="btn btn-sm btn-primary">Scarica QR</a>
+            <a href="{{ url_for('table_edit', tid=t.id) }}" class="btn btn-sm btn-secondary">Modifica</a>
+            <form action="{{ url_for('table_toggle', tid=t.id) }}" method="post" class="confirm-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-sm btn-secondary">{{ 'Disattiva' if t.active else 'Attiva' }}</button>
+            </form>
+            <form action="{{ url_for('table_delete', tid=t.id) }}" method="post" class="confirm-form"
+                  onsubmit="return confirm('Eliminare il tavolo {{ t.number }}?')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-sm btn-danger">Elimina</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <div class="icon">🪑</div>
+    <p>Nessun tavolo configurato.</p>
+    <a href="{{ url_for('table_create') }}" class="btn btn-primary">+ Crea il primo tavolo</a>
+</div>
+{% endif %}
+{% endblock %}

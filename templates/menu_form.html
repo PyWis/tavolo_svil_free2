@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}{{ "Modifica" if item else "Nuovo" }} Piatto{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ "Modifica Piatto" if item else "Nuovo Piatto" }}</h1>
+</div>
+
+<div class="card" style="max-width:700px;">
+    <div class="card-header">{{ "Modifica" if item else "Aggiungi" }} Piatto al Menu</div>
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="title">Titolo</label>
+                    <input type="text" id="title" name="title" class="form-control" required autofocus
+                           value="{{ item.title if item else '' }}"
+                           placeholder="es. Spaghetti alla Carbonara">
+                </div>
+                <div class="form-group">
+                    <label for="category_id">Categoria</label>
+                    <select id="category_id" name="category_id" class="form-control" required>
+                        <option value="">— Seleziona —</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.id }}" {{ 'selected' if item and item.category_id == cat.id }}>{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="ingredients">Ingredienti</label>
+                <input type="text" id="ingredients" name="ingredients" class="form-control"
+                       value="{{ item.ingredients if item else '' }}"
+                       placeholder="es. guanciale, pecorino, uova, pepe nero">
+            </div>
+
+            <div class="form-group">
+                <label for="description">Descrizione</label>
+                <textarea id="description" name="description" class="form-control"
+                          placeholder="Una breve descrizione del piatto...">{{ item.description if item else '' }}</textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="price">Prezzo (€)</label>
+                    <input type="number" id="price" name="price" class="form-control" required
+                           step="0.01" min="0"
+                           value="{{ '%.2f'|format(item.price) if item else '' }}"
+                           placeholder="12.50">
+                </div>
+                <div class="form-group">
+                    <label for="sort_order">Ordine</label>
+                    <input type="number" id="sort_order" name="sort_order" class="form-control"
+                           value="{{ item.sort_order if item else 0 }}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="image">Foto del piatto</label>
+                {% if item and item.image_path %}
+                    <div style="margin-bottom:0.75rem;">
+                        <img src="{{ url_for('static', filename=item.image_path) }}" alt="{{ item.title }}"
+                             style="max-width:180px; max-height:180px; border-radius:8px; box-shadow:var(--ombra); display:block;">
+                        <label class="form-check" style="margin-top:0.5rem;">
+                            <input type="checkbox" name="remove_image" value="1">
+                            <span>Rimuovi foto attuale</span>
+                        </label>
+                    </div>
+                {% endif %}
+                <input type="file" id="image" name="image" class="form-control"
+                       accept="image/png, image/jpeg, image/gif, image/webp">
+                <small class="text-muted text-sm">Formati: PNG, JPG, GIF, WEBP. Max 4 MB.</small>
+            </div>
+
+            <div class="form-group">
+                <label class="form-check">
+                    <input type="checkbox" name="visible" {{ 'checked' if not item or item.visible }}>
+                    <span>Visibile nel menu pubblico</span>
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">{{ "Salva Modifiche" if item else "Aggiungi Piatto" }}</button>
+                <a href="{{ url_for('menu_list') }}" class="btn btn-secondary">Annulla</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Gestione Piatti{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Gestione Piatti</h1>
+    <a href="{{ url_for('menu_item_create') }}" class="btn btn-primary">+ Nuovo Piatto</a>
+</div>
+
+{% if items %}
+<div class="card">
+    <div class="card-header">Tutti i Piatti</div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Piatto</th>
+                        <th>Categoria</th>
+                        <th>Prezzo</th>
+                        <th>Stato</th>
+                        <th style="text-align:right;">Azioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:0.75rem;">
+                                {% if item.image_path %}
+                                    <img src="{{ url_for('static', filename=item.image_path) }}" alt="{{ item.title }}"
+                                         style="width:48px; height:48px; object-fit:cover; border-radius:6px; flex-shrink:0;">
+                                {% else %}
+                                    <div style="width:48px; height:48px; border-radius:6px; background:var(--grigio-chiaro); display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0;">🍽</div>
+                                {% endif %}
+                                <div>
+                                    <strong>{{ item.title }}</strong>
+                                    {% if item.ingredients %}
+                                        <br><span class="text-sm text-muted" style="font-style:italic;">{{ item.ingredients[:60] }}{{ '...' if item.ingredients|length > 60 }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ item.category_name }}</td>
+                        <td class="price">€ {{ "%.2f"|format(item.price) }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('menu_item_toggle', mid=item.id) }}" class="confirm-form">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="badge {{ 'badge-visible' if item.visible else 'badge-hidden' }}" style="cursor:pointer; border:none;" title="Clicca per cambiare">
+                                    {{ "Visibile" if item.visible else "Nascosto" }}
+                                </button>
+                            </form>
+                        </td>
+                        <td style="text-align:right;">
+                            <a href="{{ url_for('menu_item_edit', mid=item.id) }}" class="btn btn-sm btn-secondary">Modifica</a>
+                            <form method="POST" action="{{ url_for('menu_item_delete', mid=item.id) }}" class="confirm-form">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Eliminare questo piatto?')">Elimina</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body">
+        <div class="empty-state">
+            <div class="icon">🍝</div>
+            <p>Nessun piatto nel menu.</p>
+            <a href="{{ url_for('menu_item_create') }}" class="btn btn-primary">Aggiungi il primo piatto</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

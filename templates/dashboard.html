@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Tavolò{% endblock %}
+
+{% block extra_css %}
+<style>
+    .promo-banner {
+        display: block;
+        text-decoration: none;
+        background: linear-gradient(135deg, #e66b1d 0%, #353535 100%);
+        color: #fff;
+        border-radius: 12px;
+        padding: 1.25rem 1.5rem;
+        margin-top: 1.75rem;
+        box-shadow: 0 4px 16px rgba(230,107,29,0.28);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    .promo-banner::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: -50px;
+        width: 200px;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1));
+        transform: skewX(-20deg);
+    }
+    .promo-banner:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(230,107,29,0.38);
+    }
+    .promo-banner-content {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+    .promo-banner-icon {
+        font-size: 2.25rem;
+        flex-shrink: 0;
+    }
+    .promo-banner-text {
+        flex: 1;
+    }
+    .promo-banner-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.15rem;
+    }
+    .promo-banner-subtitle {
+        font-size: 0.9rem;
+        opacity: 0.92;
+    }
+    .promo-banner-cta {
+        background: rgba(255,255,255,0.2);
+        border: 1px solid rgba(255,255,255,0.4);
+        padding: 0.6rem 1.1rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    @media (max-width: 600px) {
+        .promo-banner-content { flex-wrap: wrap; }
+        .promo-banner-cta { width: 100%; text-align: center; }
+    }
+    .stat-limit {
+        font-size: 1.1rem;
+        color: var(--grigio);
+        font-weight: 400;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-number">{{ cat_count }} <span class="stat-limit">/ {{ MAX_CATEGORIES }}</span></div>
+        <div class="stat-label">Categorie</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ item_count }} <span class="stat-limit">/ {{ MAX_MENU_ITEMS }}</span></div>
+        <div class="stat-label">Piatti nel Menu</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ table_total }} <span class="stat-limit">/ {{ MAX_TABLES }}</span></div>
+        <div class="stat-label">Tavoli ({{ table_count }} attivi)</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ user_count }} <span class="stat-limit">/ {{ MAX_USERS }}</span></div>
+        <div class="stat-label">Utenti</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ pending_orders }}</div>
+        <div class="stat-label">Ordini in Attesa</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">Azioni Rapide</div>
+    <div class="card-body" style="display:flex; flex-wrap:wrap; gap:0.75rem;">
+        <a href="{{ url_for('category_create') }}" class="btn btn-primary">+ Nuova Categoria</a>
+        <a href="{{ url_for('menu_item_create') }}" class="btn btn-primary">+ Nuovo Piatto</a>
+        <a href="{{ url_for('tables_list') }}" class="btn btn-primary">🪑 Gestisci Tavoli</a>
+        <a href="{{ url_for('orders_list') }}" class="btn btn-primary">📋 Vedi Ordini</a>
+        <a href="{{ url_for('index') }}" class="btn btn-outline">👁 Vedi Menu Pubblico</a>
+        {% if current_user.role == 'admin' %}
+            <a href="{{ url_for('user_create') }}" class="btn btn-secondary">+ Nuovo Utente</a>
+            <form action="{{ url_for('orders_end_of_day') }}" method="post"
+                  onsubmit="return confirm('Sei sicuro? Questa azione cancellerà TUTTI gli ordini.');"
+                  style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-danger">🌙 Fine Giornata</button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+
+<a href="https://www.qrtavolo.example" target="_blank" rel="noopener" class="promo-banner">
+    <div class="promo-banner-content">
+        <div class="promo-banner-icon">🚀</div>
+        <div class="promo-banner-text">
+            <div class="promo-banner-title">Scopri QR Tavolo Pro</div>
+            <div class="promo-banner-subtitle">Passa alla versione completa: piatti, categorie, utenti e tavoli illimitati!</div>
+        </div>
+        <div class="promo-banner-cta">Visita il sito →</div>
+    </div>
+</a>
+{% endblock %}

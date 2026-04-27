@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+{% block title %}Tavolo {{ table.number }} — Ordina{% endblock %}
+
+{% block extra_css %}
+<style>
+    .order-hero {
+        text-align: center;
+        padding: 2rem 1rem 1.5rem;
+    }
+    .order-hero h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem;
+        color: var(--rosso);
+    }
+    .order-hero .table-info {
+        font-size: 1rem;
+        color: var(--grigio);
+        font-style: italic;
+        font-family: 'Playfair Display', serif;
+    }
+    .menu-divider {
+        width: 80px;
+        height: 3px;
+        background: var(--rosso);
+        margin: 1rem auto;
+        border-radius: 2px;
+    }
+
+    .order-category { margin-bottom: 2.5rem; }
+    .order-category-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.5rem;
+        color: var(--rosso-scuro);
+        text-align: center;
+        margin-bottom: 1rem;
+        position: relative;
+    }
+    .order-category-title::after {
+        content: '';
+        display: block;
+        width: 40px;
+        height: 2px;
+        background: var(--rosso);
+        margin: 0.4rem auto 0;
+    }
+
+    .order-item {
+        background: var(--bianco);
+        border-radius: var(--raggio);
+        padding: 1rem 1.25rem;
+        margin-bottom: 0.75rem;
+        box-shadow: var(--ombra);
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 1rem;
+        align-items: center;
+        transition: var(--transizione);
+        border-left: 4px solid transparent;
+    }
+    .order-item.selected { border-left-color: var(--rosso); background: #FFF8F0; }
+    .order-item-photo {
+        width: 84px;
+        height: 84px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    .order-item-info { min-width: 0; }
+    .order-item-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--nero);
+    }
+    .order-item-ingredients {
+        font-size: 0.8rem;
+        color: var(--grigio);
+        font-style: italic;
+    }
+    .order-item-desc {
+        font-size: 0.85rem;
+        color: var(--grigio-scuro);
+        margin-top: 0.15rem;
+    }
+    .order-item-price {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: var(--rosso);
+        font-size: 1rem;
+        margin-top: 0.25rem;
+    }
+    .order-item-controls {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+        min-width: 100px;
+    }
+    .qty-control {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    .qty-btn {
+        width: 32px;
+        height: 32px;
+        border: 2px solid var(--rosso);
+        background: var(--bianco);
+        color: var(--rosso);
+        border-radius: 50%;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transizione);
+    }
+    .qty-btn:hover { background: var(--rosso); color: var(--bianco); }
+    .qty-input {
+        width: 40px;
+        text-align: center;
+        border: none;
+        font-size: 1.1rem;
+        font-weight: 700;
+        font-family: 'Lato', sans-serif;
+        background: transparent;
+        color: var(--nero);
+    }
+    .qty-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .qty-input { -moz-appearance: textfield; }
+    .item-note {
+        width: 100%;
+        margin-top: 0.35rem;
+    }
+    .item-note input {
+        width: 100%;
+        padding: 0.3rem 0.5rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-family: 'Lato', sans-serif;
+        color: var(--grigio-scuro);
+    }
+    .item-note input::placeholder { color: #bdbdbd; }
+
+    /* Cart summary */
+    .cart-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--rosso);
+        color: var(--bianco);
+        padding: 0.75rem 1.5rem;
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 100;
+        box-shadow: 0 -4px 16px rgba(0,0,0,0.2);
+    }
+    .cart-bar.visible { display: flex; }
+    .cart-info {
+        font-size: 0.95rem;
+        font-weight: 600;
+    }
+    .cart-total {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+    .cart-btn {
+        background: var(--bianco);
+        color: var(--rosso);
+        border: none;
+        padding: 0.6rem 1.5rem;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: 'Lato', sans-serif;
+        transition: var(--transizione);
+    }
+    .cart-btn:hover { background: var(--rosso-soft); }
+
+    .order-notes {
+        margin: 1.5rem 0 6rem;
+    }
+    .order-notes textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-family: 'Lato', sans-serif;
+        font-size: 0.95rem;
+        min-height: 80px;
+        resize: vertical;
+        transition: var(--transizione);
+    }
+    .order-notes textarea:focus {
+        outline: none;
+        border-color: var(--rosso);
+        box-shadow: 0 0 0 3px rgba(230,107,29,0.15);
+    }
+    .order-notes label {
+        display: block;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--grigio-scuro);
+        margin-bottom: 0.4rem;
+    }
+
+    @media (max-width: 500px) {
+        .order-item {
+            grid-template-columns: 1fr;
+        }
+        .order-item-photo {
+            width: 100%;
+            height: 160px;
+        }
+        .order-item-controls {
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        .cart-bar { flex-wrap: wrap; gap: 0.5rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="order-hero">
+    <h1>Tavolo {{ table.number }}</h1>
+    {% if table.name %}
+        <p class="table-info">{{ table.name }}</p>
+    {% endif %}
+    <div class="menu-divider"></div>
+    <p style="color: var(--grigio); font-size: 0.9rem;">Seleziona i piatti e invia il tuo ordine</p>
+</div>
+
+{% if categories and items_by_cat %}
+<form id="orderForm" action="{{ url_for('table_submit_order', number=table.number) }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% for cat in categories %}
+        {% if cat.id in items_by_cat %}
+        <section class="order-category">
+            <h2 class="order-category-title">{{ cat.name }}</h2>
+            {% for item in items_by_cat[cat.id] %}
+            <div class="order-item" id="item-{{ item.id }}">
+                {% if item.image_path %}
+                    <img src="{{ url_for('static', filename=item.image_path) }}" alt="{{ item.title }}" class="order-item-photo">
+                {% else %}
+                    <div class="order-item-photo" style="background:var(--grigio-chiaro); display:flex; align-items:center; justify-content:center; font-size:1.6rem;">🍽</div>
+                {% endif %}
+                <div class="order-item-info">
+                    <div class="order-item-title">{{ item.title }}</div>
+                    {% if item.ingredients %}
+                        <div class="order-item-ingredients">{{ item.ingredients }}</div>
+                    {% endif %}
+                    {% if item.description %}
+                        <div class="order-item-desc">{{ item.description }}</div>
+                    {% endif %}
+                    <div class="order-item-price">&euro; {{ "%.2f"|format(item.price) }}</div>
+                </div>
+                <div class="order-item-controls">
+                    <div class="qty-control">
+                        <button type="button" class="qty-btn" onclick="changeQty({{ item.id }}, -1)">−</button>
+                        <input type="number" name="qty_{{ item.id }}" id="qty_{{ item.id }}"
+                               class="qty-input" value="0" min="0" max="20"
+                               data-price="{{ item.price }}"
+                               onchange="updateCart()">
+                        <button type="button" class="qty-btn" onclick="changeQty({{ item.id }}, 1)">+</button>
+                    </div>
+                    <div class="item-note">
+                        <input type="text" name="note_{{ item.id }}" placeholder="Note (allergie, cottura...)">
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+        {% endif %}
+    {% endfor %}
+
+    <div class="order-notes">
+        <label for="order_notes">Note per l'ordine</label>
+        <textarea name="order_notes" id="order_notes" placeholder="Richieste speciali, allergie, preferenze..."></textarea>
+    </div>
+
+    <div class="cart-bar" id="cartBar">
+        <div>
+            <div class="cart-info"><span id="cartCount">0</span> piatti</div>
+            <div class="cart-total">&euro; <span id="cartTotal">0.00</span></div>
+        </div>
+        <button type="submit" class="cart-btn">Invia Ordine</button>
+    </div>
+</form>
+{% else %}
+<div style="text-align:center; padding:3rem; color:var(--grigio);">
+    <div style="font-size:3rem;">🍽</div>
+    <p>Il menu non è ancora disponibile.</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function changeQty(itemId, delta) {
+    const input = document.getElementById('qty_' + itemId);
+    let val = parseInt(input.value) || 0;
+    val = Math.max(0, Math.min(20, val + delta));
+    input.value = val;
+    updateCart();
+}
+
+function updateCart() {
+    let totalItems = 0, totalPrice = 0;
+    document.querySelectorAll('.qty-input').forEach(function(input) {
+        const qty = parseInt(input.value) || 0;
+        const price = parseFloat(input.dataset.price) || 0;
+        const itemId = input.id.replace('qty_', '');
+        const card = document.getElementById('item-' + itemId);
+        if (qty > 0) {
+            card.classList.add('selected');
+            totalItems += qty;
+            totalPrice += qty * price;
+        } else {
+            card.classList.remove('selected');
+        }
+    });
+    document.getElementById('cartCount').textContent = totalItems;
+    document.getElementById('cartTotal').textContent = totalPrice.toFixed(2);
+    const bar = document.getElementById('cartBar');
+    if (totalItems > 0) {
+        bar.classList.add('visible');
+    } else {
+        bar.classList.remove('visible');
+    }
+}
+</script>
+{% endblock %}

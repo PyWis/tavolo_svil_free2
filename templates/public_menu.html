@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% block title %}Il Nostro Menu{% endblock %}
+
+{% block extra_css %}
+<style>
+    .menu-hero {
+        text-align: center;
+        padding: 3rem 1rem 2rem;
+    }
+    .menu-hero h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 3rem;
+        color: var(--rosso);
+        margin-bottom: 0.25rem;
+    }
+    .menu-hero .subtitle {
+        font-size: 1.1rem;
+        color: var(--grigio);
+        font-style: italic;
+        font-family: 'Playfair Display', serif;
+    }
+    .menu-divider {
+        width: 80px;
+        height: 3px;
+        background: var(--rosso);
+        margin: 1.5rem auto;
+        border-radius: 2px;
+    }
+
+    .menu-category {
+        margin-bottom: 3rem;
+    }
+    .category-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.75rem;
+        color: var(--rosso-scuro);
+        text-align: center;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+    .category-title::after {
+        content: '';
+        display: block;
+        width: 50px;
+        height: 2px;
+        background: var(--rosso);
+        margin: 0.5rem auto 0;
+    }
+
+    .menu-item {
+        background: var(--bianco);
+        border-radius: var(--raggio);
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: var(--ombra);
+        transition: var(--transizione);
+        border-left: 4px solid transparent;
+        display: flex;
+        gap: 1.25rem;
+        align-items: flex-start;
+    }
+    .menu-item:hover {
+        border-left-color: var(--rosso);
+        box-shadow: var(--ombra-hover);
+        transform: translateX(4px);
+    }
+    .menu-item-photo {
+        width: 110px;
+        height: 110px;
+        object-fit: cover;
+        border-radius: 10px;
+        flex-shrink: 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .menu-item-body { flex: 1; min-width: 0; }
+    @media (max-width: 500px) {
+        .menu-item { flex-direction: column; }
+        .menu-item-photo { width: 100%; height: 180px; }
+    }
+    .menu-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 0.35rem;
+    }
+    .menu-item-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--nero);
+    }
+    .menu-item-price {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--rosso);
+        white-space: nowrap;
+    }
+    .menu-item-ingredients {
+        font-size: 0.85rem;
+        color: var(--grigio);
+        font-style: italic;
+        margin-bottom: 0.25rem;
+    }
+    .menu-item-description {
+        font-size: 0.95rem;
+        color: var(--grigio-scuro);
+        line-height: 1.5;
+    }
+
+    .menu-empty {
+        text-align: center;
+        padding: 4rem 1rem;
+        color: var(--grigio);
+    }
+    .menu-empty .icon { font-size: 4rem; margin-bottom: 1rem; }
+
+    .menu-footer {
+        text-align: center;
+        padding: 2rem 1rem;
+        color: var(--grigio);
+        font-size: 0.85rem;
+        font-style: italic;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="menu-hero">
+    <h1>Il Nostro Menu</h1>
+    <p class="subtitle">Cucina tradizionale con passione</p>
+    <div class="menu-divider"></div>
+</div>
+
+{% if categories and items_by_cat %}
+    {% for cat in categories %}
+        {% if cat.id in items_by_cat %}
+        <section class="menu-category">
+            <h2 class="category-title">{{ cat.name }}</h2>
+            {% for item in items_by_cat[cat.id] %}
+            <div class="menu-item">
+                {% if item.image_path %}
+                    <img src="{{ url_for('static', filename=item.image_path) }}" alt="{{ item.title }}" class="menu-item-photo">
+                {% endif %}
+                <div class="menu-item-body">
+                    <div class="menu-item-header">
+                        <span class="menu-item-title">{{ item.title }}</span>
+                        <span class="menu-item-price">€ {{ "%.2f"|format(item.price) }}</span>
+                    </div>
+                    {% if item.ingredients %}
+                        <div class="menu-item-ingredients">{{ item.ingredients }}</div>
+                    {% endif %}
+                    {% if item.description %}
+                        <div class="menu-item-description">{{ item.description }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+        {% endif %}
+    {% endfor %}
+    <div class="menu-footer">
+        Prezzi IVA inclusa · Informare il personale per eventuali allergie
+    </div>
+{% else %}
+    <div class="menu-empty">
+        <div class="icon">🍽</div>
+        <p>Il menu è in fase di preparazione.</p>
+        <p class="text-sm">Torna a trovarci presto!</p>
+    </div>
+{% endif %}
+{% endblock %}

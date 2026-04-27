@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Gestione Utenti{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Gestione Utenti</h1>
+    <a href="{{ url_for('user_create') }}" class="btn btn-primary">+ Nuovo Utente</a>
+</div>
+
+<div class="card">
+    <div class="card-header">Utenti Registrati</div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Ruolo</th>
+                        <th>Creato il</th>
+                        <th style="text-align:right;">Azioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td><strong>{{ user.username }}</strong></td>
+                        <td><span class="badge badge-{{ user.role }}">{{ user.role }}</span></td>
+                        <td class="text-sm text-muted">{{ user.created_at[:16] if user.created_at else '—' }}</td>
+                        <td style="text-align:right;">
+                            {% if user.role != 'admin' %}
+                                <form method="POST" action="{{ url_for('user_reset_password', uid=user.id) }}" class="confirm-form" style="display:inline-flex; align-items:center; gap:0.3rem;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="password" name="new_password" placeholder="Nuova password (min 10)" class="form-control" style="width:180px; padding:0.35rem 0.5rem; font-size:0.85rem;" minlength="10">
+                                    <button type="submit" class="btn btn-sm btn-secondary" onclick="return confirm('Reimpostare la password?')">Reset</button>
+                                </form>
+                                <form method="POST" action="{{ url_for('user_delete', uid=user.id) }}" class="confirm-form" style="display:inline; margin-left:0.25rem;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Eliminare questo utente?')">Elimina</button>
+                                </form>
+                            {% else %}
+                                <span class="text-sm text-muted">Amministratore</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
