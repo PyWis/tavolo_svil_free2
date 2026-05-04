@@ -1,164 +1,1053 @@
 {% extends "base.html" %}
 
-{% block title %}Tavolò — Il Progetto{% endblock %}
+{% block title %}Tavolò — Il menu digitale per il tuo ristorante{% endblock %}
 
 {% block extra_css %}
 <style>
-    .landing-hero {
-        text-align: center;
-        padding: 3rem 1rem 2rem;
+    /* ============================================================
+       LANDING /progetto — versione marketing
+       Tutto è scopato sotto .lp-* per non toccare il resto dell'app.
+       Le sezioni "full bleed" escono dal container 1100px con il
+       trick: margin-left/right: calc(50% - 50vw).
+       ============================================================ */
+
+    .lp-section {
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        padding: 4rem 1.5rem;
     }
-    .landing-hero h1 {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.6rem;
-        color: var(--nero);
-        margin-bottom: 0.6rem;
-    }
-    .landing-hero p {
-        font-size: 1.1rem;
-        color: var(--grigio-scuro);
-        max-width: 640px;
+    .lp-inner {
+        max-width: 1100px;
         margin: 0 auto;
     }
-    .landing-grid {
+
+    /* ── HERO ────────────────────────────────────────────────── */
+    .lp-hero {
+        background: linear-gradient(135deg, #fff8f0 0%, #fde0cc 60%, #f7c9a3 100%);
+        position: relative;
+        overflow: hidden;
+        padding: 5rem 1.5rem 4rem;
+    }
+    .lp-hero::before {
+        content: "";
+        position: absolute;
+        top: -120px; right: -120px;
+        width: 380px; height: 380px;
+        background: radial-gradient(circle, rgba(230,107,29,0.25), transparent 70%);
+        border-radius: 50%;
+    }
+    .lp-hero-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
-        margin-top: 2rem;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 3rem;
+        align-items: center;
+        position: relative;
+        z-index: 1;
     }
-    .plan-card {
-        background: var(--bianco);
-        border-radius: var(--raggio);
-        box-shadow: var(--ombra);
-        padding: 2rem 1.5rem;
-        display: flex;
-        flex-direction: column;
-        transition: var(--transizione);
-        border-top: 4px solid var(--rosso);
-    }
-    .plan-card:hover {
-        box-shadow: var(--ombra-hover);
-        transform: translateY(-4px);
-    }
-    .plan-card.gold {
-        border-top-color: #c8a24b;
-        background: linear-gradient(180deg, #fffaf0 0%, var(--bianco) 60%);
-    }
-    .plan-icon {
-        font-size: 2.2rem;
-        margin-bottom: 0.5rem;
-    }
-    .plan-card h2 {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.4rem;
-        color: var(--nero);
-        margin-bottom: 0.4rem;
-    }
-    .plan-tag {
+    .lp-eyebrow {
         display: inline-block;
+        background: var(--bianco);
+        color: var(--rosso);
         font-size: 0.75rem;
         font-weight: 700;
+        letter-spacing: 0.12em;
         text-transform: uppercase;
-        letter-spacing: 0.08em;
-        padding: 0.2rem 0.6rem;
-        border-radius: 50px;
-        margin-bottom: 0.8rem;
+        padding: 0.4rem 0.9rem;
+        border-radius: 999px;
+        box-shadow: var(--ombra);
+        margin-bottom: 1.2rem;
     }
-    .plan-tag.free { background: #E8F5E9; color: #2E7D32; }
-    .plan-tag.support { background: #E3F2FD; color: #1565C0; }
-    .plan-tag.gold { background: #fff4d6; color: #8a6a1f; }
-    .plan-card ul {
-        list-style: none;
-        margin: 0.8rem 0 1.5rem;
-        padding: 0;
-        flex: 1;
+    .lp-hero h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+        line-height: 1.1;
+        color: var(--nero);
+        margin-bottom: 1rem;
     }
-    .plan-card li {
-        padding: 0.4rem 0;
-        font-size: 0.95rem;
-        color: var(--grigio-scuro);
-        border-bottom: 1px dashed var(--grigio-chiaro);
-    }
-    .plan-card li:last-child { border-bottom: none; }
-    .plan-card li::before {
-        content: "✓";
+    .lp-hero h1 em {
+        font-style: italic;
         color: var(--rosso);
-        font-weight: 700;
-        margin-right: 0.5rem;
     }
-    .plan-card.gold li::before { color: #c8a24b; }
-    .plan-cta {
+    .lp-hero-sub {
+        font-size: 1.15rem;
+        color: var(--grigio-scuro);
+        margin-bottom: 1.8rem;
+        max-width: 520px;
+    }
+    .lp-cta-row {
+        display: flex;
+        gap: 0.8rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.2rem;
+    }
+    .lp-btn {
         display: inline-flex;
         align-items: center;
-        justify-content: center;
-        gap: 0.4rem;
-        padding: 0.75rem 1.25rem;
-        border-radius: 8px;
-        font-size: 0.95rem;
+        gap: 0.5rem;
+        padding: 0.95rem 1.6rem;
+        border-radius: 10px;
+        font-size: 1rem;
         font-weight: 700;
         text-decoration: none;
         transition: var(--transizione);
+        border: 2px solid transparent;
+    }
+    .lp-btn-primary {
+        background: var(--rosso);
+        color: var(--bianco);
+        box-shadow: 0 6px 18px rgba(230,107,29,0.35);
+    }
+    .lp-btn-primary:hover {
+        background: var(--rosso-scuro);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(230,107,29,0.45);
+    }
+    .lp-btn-ghost {
+        background: var(--bianco);
+        color: var(--nero);
+        border-color: var(--nero);
+    }
+    .lp-btn-ghost:hover {
+        background: var(--nero);
+        color: var(--bianco);
+    }
+    .lp-hero-meta {
+        font-size: 0.85rem;
+        color: var(--grigio-scuro);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+    .lp-hero-meta strong { color: var(--rosso); }
+
+    /* Mockup nel hero */
+    .lp-mockup {
+        background: var(--bianco);
+        border-radius: 18px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+        padding: 1rem;
+        transform: rotate(-1.5deg);
+        max-width: 380px;
+        margin-left: auto;
+    }
+    .lp-mockup-bar {
+        display: flex;
+        gap: 0.3rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 1px solid var(--grigio-chiaro);
+        margin-bottom: 0.8rem;
+    }
+    .lp-mockup-bar span {
+        width: 10px; height: 10px;
+        border-radius: 50%;
+        background: var(--grigio-chiaro);
+    }
+    .lp-mockup-bar span:first-child { background: #ff6058; }
+    .lp-mockup-bar span:nth-child(2) { background: #ffbd2e; }
+    .lp-mockup-bar span:nth-child(3) { background: #28c941; }
+    .lp-mockup h4 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.1rem;
+        color: var(--rosso);
+        margin-bottom: 0.6rem;
+    }
+    .lp-mockup-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding: 0.55rem 0;
+        border-bottom: 1px dashed var(--grigio-chiaro);
+        font-size: 0.92rem;
+    }
+    .lp-mockup-item:last-child { border-bottom: none; }
+    .lp-mockup-item .price { font-size: 0.95rem; }
+
+    /* ── TRUST BAR ───────────────────────────────────────────── */
+    .lp-trust {
+        background: var(--nero);
+        color: var(--bianco);
+        padding: 2rem 1.5rem;
+    }
+    .lp-trust-grid {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
         text-align: center;
     }
-    .plan-cta.free { background: var(--grigio-scuro); color: var(--bianco); }
-    .plan-cta.free:hover { background: var(--nero); transform: translateY(-1px); }
-    .plan-cta.support { background: var(--rosso); color: var(--bianco); }
-    .plan-cta.support:hover { background: var(--rosso-scuro); transform: translateY(-1px); }
-    .plan-cta.gold { background: #c8a24b; color: var(--bianco); }
-    .plan-cta.gold:hover { background: #a8862e; transform: translateY(-1px); }
+    .lp-trust-num {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.2rem;
+        color: var(--rosso-chiaro);
+        font-weight: 700;
+        line-height: 1;
+    }
+    .lp-trust-lbl {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: rgba(255,255,255,0.7);
+        margin-top: 0.4rem;
+    }
+
+    /* ── PAIN POINTS ─────────────────────────────────────────── */
+    .lp-section-title {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+    .lp-section-title h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(1.8rem, 3vw, 2.4rem);
+        color: var(--nero);
+        margin-bottom: 0.6rem;
+    }
+    .lp-section-title p {
+        color: var(--grigio-scuro);
+        max-width: 640px;
+        margin: 0 auto;
+        font-size: 1.05rem;
+    }
+    .lp-pain-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+    .lp-pain {
+        background: var(--bianco);
+        border-radius: var(--raggio);
+        padding: 1.8rem 1.5rem;
+        box-shadow: var(--ombra);
+        border-left: 4px solid var(--rosso);
+    }
+    .lp-pain-q {
+        font-weight: 700;
+        color: var(--nero);
+        margin-bottom: 0.6rem;
+        font-size: 1.05rem;
+    }
+    .lp-pain-a {
+        color: var(--grigio-scuro);
+        font-size: 0.95rem;
+    }
+    .lp-pain-a strong { color: var(--rosso); }
+
+    /* ── HOW IT WORKS ────────────────────────────────────────── */
+    .lp-how {
+        background: var(--bianco-caldo);
+    }
+    .lp-steps {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        position: relative;
+    }
+    .lp-step {
+        text-align: center;
+        position: relative;
+    }
+    .lp-step-num {
+        display: inline-flex;
+        width: 56px; height: 56px;
+        border-radius: 50%;
+        background: var(--rosso);
+        color: var(--bianco);
+        font-family: 'Playfair Display', serif;
+        font-size: 1.6rem;
+        font-weight: 700;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        box-shadow: 0 6px 16px rgba(230,107,29,0.35);
+    }
+    .lp-step h3 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.25rem;
+        color: var(--nero);
+        margin-bottom: 0.5rem;
+    }
+    .lp-step p {
+        color: var(--grigio-scuro);
+        font-size: 0.95rem;
+    }
+
+    /* ── FEATURES ────────────────────────────────────────────── */
+    .lp-feat-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+    .lp-feat {
+        background: var(--bianco);
+        border-radius: var(--raggio);
+        padding: 1.6rem 1.4rem;
+        box-shadow: var(--ombra);
+        transition: var(--transizione);
+    }
+    .lp-feat:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--ombra-hover);
+    }
+    .lp-feat-ico {
+        width: 48px; height: 48px;
+        border-radius: 12px;
+        background: var(--rosso-soft);
+        color: var(--rosso);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        margin-bottom: 0.8rem;
+    }
+    .lp-feat h4 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.15rem;
+        color: var(--nero);
+        margin-bottom: 0.4rem;
+    }
+    .lp-feat p {
+        color: var(--grigio-scuro);
+        font-size: 0.93rem;
+    }
+
+    /* ── PRICING ─────────────────────────────────────────────── */
+    .lp-pricing {
+        background: linear-gradient(180deg, #fff8f0 0%, var(--bianco) 100%);
+    }
+    .lp-pricing-toggle {
+        display: inline-flex;
+        background: var(--bianco);
+        border-radius: 999px;
+        padding: 4px;
+        box-shadow: var(--ombra);
+        margin: 0 auto 2.5rem;
+    }
+    .lp-pricing-toggle button {
+        border: none;
+        background: transparent;
+        padding: 0.55rem 1.4rem;
+        border-radius: 999px;
+        font-family: 'Lato', sans-serif;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        color: var(--grigio-scuro);
+        transition: var(--transizione);
+    }
+    .lp-pricing-toggle button.active {
+        background: var(--rosso);
+        color: var(--bianco);
+        box-shadow: 0 4px 12px rgba(230,107,29,0.3);
+    }
+    .lp-pricing-toggle .lp-save {
+        background: #2E7D32;
+        color: #fff;
+        font-size: 0.65rem;
+        padding: 0.1rem 0.45rem;
+        border-radius: 999px;
+        margin-left: 0.4rem;
+        vertical-align: middle;
+    }
+    .lp-toggle-wrap { text-align: center; }
+    .lp-plans {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        max-width: 880px;
+        margin: 0 auto;
+    }
+    .lp-plan {
+        background: var(--bianco);
+        border-radius: 16px;
+        padding: 2rem 1.8rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        border: 2px solid transparent;
+    }
+    .lp-plan.popular {
+        border-color: var(--rosso);
+        transform: scale(1.03);
+        box-shadow: 0 16px 40px rgba(230,107,29,0.2);
+    }
+    .lp-plan-badge {
+        position: absolute;
+        top: -14px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--rosso);
+        color: var(--bianco);
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: 0.35rem 0.9rem;
+        border-radius: 999px;
+        white-space: nowrap;
+    }
+    .lp-plan h3 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.6rem;
+        color: var(--nero);
+        margin-bottom: 0.3rem;
+    }
+    .lp-plan-target {
+        font-size: 0.85rem;
+        color: var(--grigio);
+        margin-bottom: 1.2rem;
+        min-height: 2.4em;
+    }
+    .lp-plan-price {
+        margin-bottom: 1.4rem;
+        padding-bottom: 1.4rem;
+        border-bottom: 1px solid var(--grigio-chiaro);
+    }
+    .lp-plan-price .amount {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.8rem;
+        color: var(--rosso);
+        font-weight: 700;
+    }
+    .lp-plan-price .period {
+        color: var(--grigio);
+        font-size: 0.95rem;
+        margin-left: 0.3rem;
+    }
+    .lp-plan-price .note {
+        display: block;
+        font-size: 0.8rem;
+        color: var(--grigio);
+        margin-top: 0.3rem;
+    }
+    .lp-plan ul {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1.5rem;
+        flex: 1;
+    }
+    .lp-plan li {
+        padding: 0.45rem 0;
+        font-size: 0.92rem;
+        color: var(--grigio-scuro);
+        display: flex;
+        gap: 0.5rem;
+    }
+    .lp-plan li::before {
+        content: "✓";
+        color: var(--rosso);
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+    .lp-plan.silver li::before { color: #6c757d; }
+    .lp-plan-cta {
+        display: block;
+        text-align: center;
+        padding: 0.85rem 1.2rem;
+        border-radius: 10px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: var(--transizione);
+    }
+    .lp-plan.silver .lp-plan-cta {
+        background: var(--grigio-chiaro);
+        color: var(--nero);
+    }
+    .lp-plan.silver .lp-plan-cta:hover {
+        background: var(--nero);
+        color: var(--bianco);
+    }
+    .lp-plan.gold .lp-plan-cta {
+        background: var(--rosso);
+        color: var(--bianco);
+    }
+    .lp-plan.gold .lp-plan-cta:hover {
+        background: var(--rosso-scuro);
+    }
+
+    /* ── ADD-ONS ─────────────────────────────────────────────── */
+    .lp-addons {
+        background: var(--nero);
+        color: var(--bianco);
+    }
+    .lp-addons .lp-section-title h2,
+    .lp-addons .lp-section-title p { color: var(--bianco); }
+    .lp-addons .lp-section-title p { color: rgba(255,255,255,0.7); }
+    .lp-addon-cols {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+    .lp-addon-col h4 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.2rem;
+        color: var(--rosso-chiaro);
+        margin-bottom: 1rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 2px solid rgba(230,107,29,0.4);
+    }
+    .lp-addon-col ul {
+        list-style: none;
+        padding: 0;
+    }
+    .lp-addon-col li {
+        padding: 0.5rem 0;
+        font-size: 0.92rem;
+        color: rgba(255,255,255,0.85);
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        border-bottom: 1px dashed rgba(255,255,255,0.1);
+    }
+    .lp-addon-col li span:last-child {
+        color: var(--rosso-chiaro);
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    /* ── TESTIMONIAL ─────────────────────────────────────────── */
+    .lp-testi {
+        background: var(--bianco-caldo);
+    }
+    .lp-testi-card {
+        max-width: 760px;
+        margin: 0 auto;
+        background: var(--bianco);
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        text-align: center;
+        position: relative;
+    }
+    .lp-testi-quote {
+        font-family: 'Playfair Display', serif;
+        font-style: italic;
+        font-size: 1.4rem;
+        color: var(--nero);
+        line-height: 1.5;
+        margin-bottom: 1.2rem;
+    }
+    .lp-testi-quote::before {
+        content: """;
+        font-size: 4rem;
+        color: var(--rosso-soft);
+        line-height: 0.3;
+        vertical-align: -0.4em;
+        margin-right: 0.3rem;
+    }
+    .lp-testi-author {
+        color: var(--grigio-scuro);
+        font-size: 0.95rem;
+    }
+    .lp-testi-author strong { color: var(--rosso); }
+
+    /* ── FAQ ─────────────────────────────────────────────────── */
+    .lp-faq {
+        max-width: 780px;
+        margin: 0 auto;
+    }
+    .lp-faq details {
+        background: var(--bianco);
+        border-radius: var(--raggio);
+        margin-bottom: 0.8rem;
+        box-shadow: var(--ombra);
+        overflow: hidden;
+        transition: var(--transizione);
+    }
+    .lp-faq details[open] {
+        box-shadow: var(--ombra-hover);
+    }
+    .lp-faq summary {
+        padding: 1.1rem 1.4rem;
+        cursor: pointer;
+        font-weight: 700;
+        color: var(--nero);
+        font-size: 1.02rem;
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .lp-faq summary::-webkit-details-marker { display: none; }
+    .lp-faq summary::after {
+        content: "+";
+        color: var(--rosso);
+        font-size: 1.6rem;
+        font-weight: 300;
+        transition: transform 0.2s;
+    }
+    .lp-faq details[open] summary::after {
+        transform: rotate(45deg);
+    }
+    .lp-faq-body {
+        padding: 0 1.4rem 1.2rem;
+        color: var(--grigio-scuro);
+        font-size: 0.95rem;
+    }
+
+    /* ── FINAL CTA ───────────────────────────────────────────── */
+    .lp-final {
+        background: linear-gradient(135deg, var(--rosso) 0%, var(--rosso-scuro) 100%);
+        color: var(--bianco);
+        text-align: center;
+    }
+    .lp-final h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(1.9rem, 3.5vw, 2.6rem);
+        margin-bottom: 0.8rem;
+    }
+    .lp-final p {
+        font-size: 1.1rem;
+        opacity: 0.95;
+        margin-bottom: 1.8rem;
+        max-width: 560px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .lp-final .lp-btn-primary {
+        background: var(--bianco);
+        color: var(--rosso);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    }
+    .lp-final .lp-btn-primary:hover {
+        background: var(--bianco-caldo);
+        color: var(--rosso-scuro);
+    }
+    .lp-final .lp-btn-ghost {
+        background: transparent;
+        color: var(--bianco);
+        border-color: rgba(255,255,255,0.7);
+    }
+    .lp-final .lp-btn-ghost:hover {
+        background: var(--bianco);
+        color: var(--rosso);
+    }
+    .lp-final-meta {
+        margin-top: 1.2rem;
+        font-size: 0.85rem;
+        opacity: 0.85;
+    }
+
+    /* ── OPEN SOURCE STRIP ───────────────────────────────────── */
+    .lp-os {
+        background: var(--bianco);
+        border-top: 1px solid var(--grigio-chiaro);
+        padding: 2.2rem 1.5rem;
+    }
+    .lp-os-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+    .lp-os h4 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.15rem;
+        color: var(--nero);
+        margin-bottom: 0.2rem;
+    }
+    .lp-os p {
+        color: var(--grigio-scuro);
+        font-size: 0.92rem;
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────────────────── */
+    @media (max-width: 900px) {
+        .lp-hero-grid,
+        .lp-pain-grid,
+        .lp-steps,
+        .lp-feat-grid,
+        .lp-plans,
+        .lp-addon-cols,
+        .lp-trust-grid {
+            grid-template-columns: 1fr;
+        }
+        .lp-trust-grid { grid-template-columns: repeat(2, 1fr); }
+        .lp-plan.popular { transform: none; }
+        .lp-mockup { margin: 0 auto; transform: none; }
+        .lp-section { padding: 3rem 1.2rem; }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<section class="landing-hero">
-    <h1>Tavolò</h1>
-    <p>Gestione menu, tavoli e ordini per il tuo ristorante. Open source, leggero, pronto all'uso.</p>
-</section>
 
-<section class="landing-grid">
-    <div class="plan-card">
-        <div class="plan-icon">🆓</div>
-        <span class="plan-tag free">Open Source</span>
-        <h2>Versione Free</h2>
-        <ul>
-            <li>Codice distribuito gratuitamente</li>
-            <li>Menu pubblico e ordini da QR</li>
-            <li>Fino a {{ MAX_MENU_ITEMS }} piatti, {{ MAX_CATEGORIES }} categorie, {{ MAX_TABLES }} tavoli</li>
-            <li>Self-hosting su tua infrastruttura</li>
-        </ul>
-        <a href="https://github.com/pywis/tavolo_svil_free2" class="plan-cta free" target="_blank" rel="noopener">
-            Scarica da Git ↗
-        </a>
-    </div>
-
-    <div class="plan-card">
-        <div class="plan-icon">🛠️</div>
-        <span class="plan-tag support">A pagamento</span>
-        <h2>Assistenza</h2>
-        <ul>
-            <li>Installazione e configurazione</li>
-            <li>Personalizzazioni e integrazioni</li>
-            <li>Supporto tecnico dedicato</li>
-            <li>Formazione del personale</li>
-        </ul>
-        <a href="https://github.com/pywis/tavolo_svil_free2/issues" class="plan-cta support" target="_blank" rel="noopener">
-            Richiedi assistenza ↗
-        </a>
-    </div>
-
-    <div class="plan-card gold">
-        <div class="plan-icon">⭐</div>
-        <span class="plan-tag gold">Premium</span>
-        <h2>Versione Gold</h2>
-        <ul>
-            <li>Limiti rimossi su piatti, tavoli e utenti</li>
-            <li>Funzionalità avanzate per ordini e statistiche</li>
-            <li>Aggiornamenti prioritari</li>
-            <li>Supporto premium incluso</li>
-        </ul>
-        <a href="https://github.com/pywis/tavolo_svil_free2/releases" class="plan-cta gold" target="_blank" rel="noopener">
-            Acquista Gold ↗
-        </a>
+<!-- ════════════════════ HERO ════════════════════ -->
+<section class="lp-section lp-hero">
+    <div class="lp-inner lp-hero-grid">
+        <div>
+            <span class="lp-eyebrow">Menu digitale + ordini al tavolo</span>
+            <h1>Il tuo ristorante,<br><em>senza più carta del menu.</em></h1>
+            <p class="lp-hero-sub">
+                Tavolò trasforma ogni tavolo in un punto d'ordine: il cliente inquadra il QR,
+                ordina dal telefono, la cucina riceve la comanda in tempo reale.
+                Tu risparmi tempo, errori e stampe.
+            </p>
+            <div class="lp-cta-row">
+                <a href="#pricing" class="lp-btn lp-btn-primary">Prova gratis 14 giorni →</a>
+                <a href="{{ url_for('index') }}" class="lp-btn lp-btn-ghost">Vedi una demo live</a>
+            </div>
+            <div class="lp-hero-meta">
+                <strong>✓</strong> Senza carta di credito &nbsp;·&nbsp;
+                <strong>✓</strong> Setup in 10 minuti &nbsp;·&nbsp;
+                <strong>✓</strong> Disdici quando vuoi
+            </div>
+        </div>
+        <div>
+            <div class="lp-mockup">
+                <div class="lp-mockup-bar"><span></span><span></span><span></span></div>
+                <h4>🍝 Primi piatti</h4>
+                <div class="lp-mockup-item"><span>Tagliatelle al ragù</span><span class="price">€ 12,00</span></div>
+                <div class="lp-mockup-item"><span>Risotto ai funghi porcini</span><span class="price">€ 14,00</span></div>
+                <div class="lp-mockup-item"><span>Spaghetti alle vongole</span><span class="price">€ 16,00</span></div>
+                <div class="lp-mockup-item"><span>Gnocchi al gorgonzola</span><span class="price">€ 11,00</span></div>
+                <div style="margin-top:0.8rem;text-align:right;">
+                    <span class="lp-btn lp-btn-primary" style="padding:0.5rem 1rem;font-size:0.85rem;">Aggiungi al carrello</span>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
+
+<!-- ════════════════════ TRUST BAR ════════════════════ -->
+<section class="lp-section lp-trust" style="padding:2.2rem 1.5rem;">
+    <div class="lp-trust-grid">
+        <div>
+            <div class="lp-trust-num">-70%</div>
+            <div class="lp-trust-lbl">Tempo per prendere ordini</div>
+        </div>
+        <div>
+            <div class="lp-trust-num">+22%</div>
+            <div class="lp-trust-lbl">Scontrino medio</div>
+        </div>
+        <div>
+            <div class="lp-trust-num">0</div>
+            <div class="lp-trust-lbl">Errori di trascrizione</div>
+        </div>
+        <div>
+            <div class="lp-trust-num">10 min</div>
+            <div class="lp-trust-lbl">Per essere operativo</div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════ PAIN POINTS ════════════════════ -->
+<section class="lp-section">
+    <div class="lp-inner">
+        <div class="lp-section-title">
+            <h2>Quanto ti costa <em style="color:var(--rosso);font-style:normal;">non avere</em> un menu digitale?</h2>
+            <p>Ogni servizio fai gli stessi conti: code al banco, comande sbagliate, menu plastificati da ristampare ogni cambio prezzo.</p>
+        </div>
+        <div class="lp-pain-grid">
+            <div class="lp-pain">
+                <div class="lp-pain-q">📝 "Cameriere! …Cameriere!"</div>
+                <p class="lp-pain-a">I clienti aspettano per ordinare e per chiedere il conto. Con Tavolò <strong>ordinano quando vogliono</strong> direttamente dal tavolo.</p>
+            </div>
+            <div class="lp-pain">
+                <div class="lp-pain-q">🖨 Menu stampati ogni mese</div>
+                <p class="lp-pain-a">Cambi un prezzo o un piatto e devi rifare tutto. Con Tavolò <strong>aggiorni in 10 secondi</strong> dal pannello, senza ristampe.</p>
+            </div>
+            <div class="lp-pain">
+                <div class="lp-pain-q">😤 Comande illeggibili</div>
+                <p class="lp-pain-a">"Una pizza senza… cosa?". Le comande arrivano in cucina già scritte, complete e <strong>senza fraintendimenti</strong>.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════ HOW IT WORKS ════════════════════ -->
+<section class="lp-section lp-how">
+    <div class="lp-inner">
+        <div class="lp-section-title">
+            <h2>Come funziona</h2>
+            <p>Dal QR sul tavolo alla comanda in cucina, in tre passaggi.</p>
+        </div>
+        <div class="lp-steps">
+            <div class="lp-step">
+                <div class="lp-step-num">1</div>
+                <h3>Stampa i QR</h3>
+                <p>Generi e stampi i QR per ogni tavolo direttamente dal pannello, con o senza il tuo logo.</p>
+            </div>
+            <div class="lp-step">
+                <div class="lp-step-num">2</div>
+                <h3>Il cliente ordina</h3>
+                <p>Inquadra il QR, sfoglia il menu con foto e allergeni, sceglie i piatti e invia l'ordine.</p>
+            </div>
+            <div class="lp-step">
+                <div class="lp-step-num">3</div>
+                <h3>La cucina riceve</h3>
+                <p>Notifica sonora in tempo reale, comanda chiara su tablet o monitor. Sala libera di servire.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════ FEATURES ════════════════════ -->
+<section class="lp-section">
+    <div class="lp-inner">
+        <div class="lp-section-title">
+            <h2>Tutto quello che ti serve, niente di più</h2>
+            <p>Pensato con i ristoratori. Veloce, leggero, pronto all'uso anche per chi non è "uno di tecnologia".</p>
+        </div>
+        <div class="lp-feat-grid">
+            <div class="lp-feat">
+                <div class="lp-feat-ico">📱</div>
+                <h4>Menu sempre aggiornato</h4>
+                <p>Categorie, piatti, ingredienti, prezzi. Mostri o nascondi un piatto in un click.</p>
+            </div>
+            <div class="lp-feat">
+                <div class="lp-feat-ico">🔲</div>
+                <h4>QR per ogni tavolo</h4>
+                <p>Generazione automatica e stampa formato A5/A6 con il tuo logo (Gold).</p>
+            </div>
+            <div class="lp-feat">
+                <div class="lp-feat-ico">🔔</div>
+                <h4>Notifiche real-time</h4>
+                <p>Suono e badge per ogni nuovo ordine. Niente più tavoli dimenticati.</p>
+            </div>
+            <div class="lp-feat">
+                <div class="lp-feat-ico">👨‍🍳</div>
+                <h4>Vista cucina dedicata</h4>
+                <p>Schermata fullscreen ottimizzata per tablet e monitor in cucina.</p>
+            </div>
+            <div class="lp-feat">
+                <div class="lp-feat-ico">📊</div>
+                <h4>Report e analytics</h4>
+                <p>Piatti più venduti, incassi, orari di punta. Decisioni basate sui dati.</p>
+            </div>
+            <div class="lp-feat">
+                <div class="lp-feat-ico">🥗</div>
+                <h4>Allergeni e diete</h4>
+                <p>Vegano, gluten-free, allergeni: trasparenza per i clienti, meno responsabilità per te.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════ PRICING ════════════════════ -->
+<section id="pricing" class="lp-section lp-pricing">
+    <div class="lp-inner">
+        <div class="lp-section-title">
+            <h2>Un piano per ogni ristorante</h2>
+            <p>Inizia con 14 giorni di prova gratuita, senza carta di credito. Cambi piano o disdici quando vuoi.</p>
+        </div>
+
+        <div class="lp-toggle-wrap">
+            <div class="lp-pricing-toggle">
+                <button id="toggle-monthly" class="active" type="button">Mensile</button>
+                <button id="toggle-yearly" type="button">Annuale <span class="lp-save">-15%</span></button>
+            </div>
+        </div>
+
+        <div class="lp-plans">
+            <!-- SILVER -->
+            <div class="lp-plan silver">
+                <h3>Silver</h3>
+                <p class="lp-plan-target">Ideale per piccoli ristoranti, bar, trattorie e pizzerie d'asporto.</p>
+                <div class="lp-plan-price">
+                    <span class="amount" data-monthly="29 €" data-yearly="249 €">29 €</span>
+                    <span class="period" data-monthly="/ mese" data-yearly="/ anno">/ mese</span>
+                    <span class="note" data-monthly="Fatturato mensilmente · IVA escl." data-yearly="Risparmi ~89 € l'anno · IVA escl.">Fatturato mensilmente · IVA escl.</span>
+                </div>
+                <ul>
+                    <li>Menu digitale completo</li>
+                    <li>QR code per ogni tavolo</li>
+                    <li>Fino a <strong>15 tavoli</strong></li>
+                    <li>Fino a <strong>200 ordini/mese</strong></li>
+                    <li>1 utente admin</li>
+                    <li>Visibilità e ordinamento piatti</li>
+                    <li>Supporto email entro 48h</li>
+                </ul>
+                <a href="#cta-trial" class="lp-plan-cta">Inizia con Silver</a>
+            </div>
+
+            <!-- GOLD -->
+            <div class="lp-plan gold popular">
+                <span class="lp-plan-badge">★ Il più scelto</span>
+                <h3>Gold</h3>
+                <p class="lp-plan-target">Per ristoranti strutturati, catene e locali con alto volume.</p>
+                <div class="lp-plan-price">
+                    <span class="amount" data-monthly="49 €" data-yearly="419 €">49 €</span>
+                    <span class="period" data-monthly="/ mese" data-yearly="/ anno">/ mese</span>
+                    <span class="note" data-monthly="Fatturato mensilmente · IVA escl." data-yearly="Risparmi ~169 € l'anno · IVA escl.">Fatturato mensilmente · IVA escl.</span>
+                </div>
+                <ul>
+                    <li><strong>Tutto Silver</strong>, più:</li>
+                    <li>Foto piatti, allergeni e icone dietetiche</li>
+                    <li>QR stampabili con il tuo logo</li>
+                    <li>Tavoli e ordini <strong>illimitati</strong></li>
+                    <li>Multi-utente con ruoli (cameriere, cucina)</li>
+                    <li>Notifiche real-time + vista cucina</li>
+                    <li>Dashboard analytics e storico ordini</li>
+                    <li>Menu in 2 lingue + brand custom</li>
+                    <li>Email entro 24h + chat WhatsApp</li>
+                </ul>
+                <a href="#cta-trial" class="lp-plan-cta">Inizia con Gold</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════ ADD-ONS ════════════════════ -->
+<section class="lp-section lp-addons">
+    <div class="lp-inner">
+        <div class="lp-section-title">
+            <h2>Componi il pacchetto su misura</h2>
+            <p>Add-on attivabili quando vuoi: hardware pronto all'uso, funzioni extra e servizi professionali.</p>
+        </div>
+        <div class="lp-addon-cols">
+            <div class="lp-addon-col">
+                <h4>🖥 Hardware</h4>
+                <ul>
+                    <li><span>Tablet Cucina (10")</span><span>199 €</span></li>
+                    <li><span>Tablet Cassa</span><span>249 €</span></li>
+                    <li><span>Stampante comande</span><span>149 €</span></li>
+                </ul>
+            </div>
+            <div class="lp-addon-col">
+                <h4>⚡ Funzioni extra</h4>
+                <ul>
+                    <li><span>Pagamenti online</span><span>15 €/mese</span></li>
+                    <li><span>Prenotazione tavoli</span><span>10 €/mese</span></li>
+                    <li><span>Programma fedeltà</span><span>12 €/mese</span></li>
+                    <li><span>Asporto e delivery</span><span>15 €/mese</span></li>
+                    <li><span>Multi-sede</span><span>19 €/sede</span></li>
+                    <li><span>Dominio personalizzato</span><span>5 €/mese</span></li>
+                </ul>
+            </div>
+            <div class="lp-addon-col">
+                <h4>🎓 Servizi pro</h4>
+                <ul>
+                    <li><span>Setup assistito</span><span>99 €</span></li>
+                    <li><span>Shooting fotografico (30 piatti)</span><span>199 €</span></li>
+                    <li><span>Grafica menu su misura</span><span>149 €</span></li>
+                    <li><span>Formazione staff (1h)</span><span>49 €</span></li>
+                    <li><span>Sviluppo custom</span><span>su richiesta</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════ TESTIMONIAL ════════════════════ -->
+<section class="lp-section lp-testi">
+    <div class="lp-inner">
+        <div class="lp-testi-card">
+            <p class="lp-testi-quote">
+                In due settimane abbiamo dimezzato i tempi di servizio nelle ore di punta.
+                I camerieri girano meno, i clienti aspettano meno, la cucina riceve comande chiare.
+                Non torneremmo mai indietro.
+            </p>
+            <p class="lp-testi-author">
+                <strong>— [Nome cliente]</strong>, Titolare di [Nome ristorante]
+                <br><small style="color:var(--grigio);">Placeholder testimonianza — da raccogliere su clienti pilota</small>
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════ FAQ ════════════════════ -->
+<section class="lp-section">
+    <div class="lp-inner">
+        <div class="lp-section-title">
+            <h2>Domande frequenti</h2>
+        </div>
+        <div class="lp-faq">
+            <details>
+                <summary>Quanto dura davvero la prova gratuita?</summary>
+                <div class="lp-faq-body">
+                    14 giorni con tutte le funzionalità del piano scelto. Non chiediamo carta di credito:
+                    se non confermi, l'account si disattiva da solo, nessun addebito.
+                </div>
+            </details>
+            <details>
+                <summary>I miei clienti devono scaricare un'app?</summary>
+                <div class="lp-faq-body">
+                    No. Inquadrano il QR del tavolo e si apre direttamente il menu nel browser del telefono.
+                    Funziona su qualsiasi smartphone.
+                </div>
+            </details>
+            <details>
+                <summary>Posso cambiare piano in qualsiasi momento?</summary>
+                <div class="lp-faq-body">
+                    Sì, puoi passare da Silver a Gold (o viceversa) e disdire quando vuoi dal pannello,
+                    senza penali. Il cambio è immediato.
+                </div>
+            </details>
+            <details>
+                <summary>Cosa serve per partire? Devo comprare hardware?</summary>
+                <div class="lp-faq-body">
+                    Ti basta un computer per gestire il menu e gli ordini. Tablet cucina e stampante comande
+                    sono opzionali e li trovi tra gli add-on, già pre-configurati.
+                </div>
+            </details>
+            <details>
+                <summary>I miei dati sono al sicuro?</summary>
+                <div class="lp-faq-body">
+                    I dati restano sui server in UE, in conformità GDPR. Backup giornalieri inclusi e
+                    accessi cifrati end-to-end.
+                </div>
+            </details>
+            <details>
+                <summary>Posso ospitare Tavolò sul mio server?</summary>
+                <div class="lp-faq-body">
+                    Sì. Esiste anche una versione open source self-hosted: la trovi su GitHub.
+                    L'assistenza professionale è disponibile come servizio a pagamento.
+                </div>
+            </details>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════ FINAL CTA ════════════════════ -->
+<section id="cta-trial" class="lp-section lp-final">
+    <div class="lp-inner">
+        <h2>Pronto a liberare la tua sala?</h2>
+        <p>Attiva la prova gratuita di 14 giorni. Configurazione guidata, nessuna carta di credito, zero rischi.</p>
+        <div class="lp-cta-row" style="justify-content:center;">
+            <a href="{{ url_for('login') }}" class="lp-btn lp-btn-primary">Inizia gratis ora →</a>
+            <a href="https://wa.me/" class="lp-btn lp-btn-ghost" target="_blank" rel="noopener">Parla con noi su WhatsApp</a>
+        </div>
+        <p class="lp-final-meta">Hai domande? Scrivici a <strong>info@tavolo.app</strong></p>
+    </div>
+</section>
+
+<!-- ════════════════════ OPEN SOURCE STRIP ════════════════════ -->
+<section class="lp-section lp-os" style="padding:2.2rem 1.5rem;margin-top:0;">
+    <div class="lp-os-inner">
+        <div>
+            <h4>🔓 Anche open source</h4>
+            <p>Il cuore di Tavolò è open source. Scaricalo, contribuisci, ospitalo dove vuoi.<br>
+               <small class="text-muted">Versione free: max {{ MAX_MENU_ITEMS }} piatti, {{ MAX_CATEGORIES }} categorie, {{ MAX_TABLES }} tavoli.</small>
+            </p>
+        </div>
+        <a href="https://github.com/pywis/tavolo_svil_free2" class="lp-btn lp-btn-ghost" target="_blank" rel="noopener">
+            ⭐ Vedi su GitHub
+        </a>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Toggle pricing mensile/annuale
+    (function () {
+        const btnM = document.getElementById('toggle-monthly');
+        const btnY = document.getElementById('toggle-yearly');
+        if (!btnM || !btnY) return;
+        const els = document.querySelectorAll('.lp-plan-price [data-monthly]');
+
+        function setMode(mode) {
+            els.forEach(el => { el.textContent = el.dataset[mode]; });
+            btnM.classList.toggle('active', mode === 'monthly');
+            btnY.classList.toggle('active', mode === 'yearly');
+        }
+        btnM.addEventListener('click', () => setMode('monthly'));
+        btnY.addEventListener('click', () => setMode('yearly'));
+    })();
+</script>
 {% endblock %}
