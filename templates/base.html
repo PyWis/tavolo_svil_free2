@@ -417,12 +417,12 @@
         </a>
         <button class="nav-toggle" onclick="document.querySelector('.navbar-nav').classList.toggle('open')">☰</button>
         <ul class="navbar-nav">
-            <li><a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' }}">Menu Pubblico</a></li>
-            <li><a href="{{ url_for('landing') }}" class="{{ 'active' if request.endpoint == 'landing' }}">Progetto</a></li>
+            <li><a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' }}">Progetto</a></li>
+            <li><a href="{{ url_for('public_menu') }}" class="{{ 'active' if request.endpoint == 'public_menu' }}">Menu Pubblico</a></li>
             {% if current_user %}
                 <li><a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}">Dashboard</a></li>
                 <li><a href="{{ url_for('categories_list') }}" class="{{ 'active' if 'categor' in request.endpoint }}">Categorie</a></li>
-                <li><a href="{{ url_for('menu_list') }}" class="{{ 'active' if 'menu' in request.endpoint }}">Piatti</a></li>
+                <li><a href="{{ url_for('menu_list') }}" class="{{ 'active' if 'menu' in request.endpoint and request.endpoint != 'public_menu' }}">Piatti</a></li>
                 <li><a href="{{ url_for('tables_list') }}" class="{{ 'active' if 'table' in request.endpoint }}">Tavoli</a></li>
                 <li><a href="{{ url_for('orders_list') }}" class="{{ 'active' if 'order' in request.endpoint }}" id="nav-orders-link">Ordini<span id="nav-orders-badge" class="nav-orders-badge" aria-live="polite">0</span></a></li>
                 {% if current_user.role == 'admin' %}
