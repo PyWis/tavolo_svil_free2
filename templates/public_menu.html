@@ -141,7 +141,11 @@
             {% for item in items_by_cat[cat.id] %}
             <div class="menu-item">
                 {% if item.image_path %}
-                    <img src="{{ url_for('static', filename=item.image_path) }}" alt="{{ item.title }}" class="menu-item-photo">
+                    <img src="{{ url_for('static', filename=item.image_path) }}" alt="{{ item.title }}" class="menu-item-photo" loading="lazy"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="menu-item-photo" style="display:none; background:var(--grigio-chiaro); align-items:center; justify-content:center; font-size:2rem;">🍽</div>
+                {% else %}
+                    <div class="menu-item-photo" style="background:var(--grigio-chiaro); display:flex; align-items:center; justify-content:center; font-size:2rem;">🍽</div>
                 {% endif %}
                 <div class="menu-item-body">
                     <div class="menu-item-header">
