@@ -133,15 +133,21 @@
     </div>
 </div>
 
-<div class="status-tabs">
-    {% for s in ['pending', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled', 'all'] %}
-    <a href="{{ url_for('orders_list', status=s) }}"
-       class="status-tab {{ 'active' if current_status == s }}">
-        {{ s|status_it }}
-    </a>
-    {% endfor %}
+<div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem;">
+    <div class="status-tabs" style="margin-bottom:0;">
+        {% for s in ['pending', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled', 'all'] %}
+        <a href="{{ url_for('orders_list', status=s) }}"
+           class="status-tab {{ 'active' if current_status == s }}">
+            {{ s|status_it }}
+        </a>
+        {% endfor %}
+    </div>
+    <span id="live-update-indicator" style="font-size:0.78rem; color:var(--grigio); font-style:italic; white-space:nowrap;">
+        aggiornamento automatico attivo
+    </span>
 </div>
 
+<div id="live-orders-list">
 {% if orders %}
     {% for o in orders %}
     <div class="order-card">
@@ -195,4 +201,38 @@
     <p>Nessun ordine{% if current_status != 'all' %} nello stato "{{ current_status|status_it }}"{% endif %}.</p>
 </div>
 {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    const list = document.getElementById('live-orders-list');
+    const indicator = document.getElementById('live-update-indicator');
+    if (!list) return;
+    const POLL_MS = 15000;
+
+    function fmt(d) {
+        return d.getHours().toString().padStart(2,'0') + ':' +
+               d.getMinutes().toString().padStart(2,'0') + ':' +
+               d.getSeconds().toString().padStart(2,'0');
+    }
+
+    async function refresh() {
+        try {
+            const resp = await fetch(window.location.href, { credentials: 'same-origin', cache: 'no-store' });
+            if (!resp.ok) return;
+            const html = await resp.text();
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+            const fresh = doc.getElementById('live-orders-list');
+            if (fresh) {
+                list.innerHTML = fresh.innerHTML;
+                if (indicator) indicator.textContent = 'aggiornato alle ' + fmt(new Date());
+            }
+        } catch (e) { /* rete non disponibile */ }
+    }
+
+    setInterval(refresh, POLL_MS);
+})();
+</script>
 {% endblock %}
