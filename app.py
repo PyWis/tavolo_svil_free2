@@ -349,7 +349,12 @@ def inject_user():
 
 @app.route("/")
 def index():
-    """Public menu page."""
+    """Landing page del progetto: versione free, assistenza, versione gold."""
+    return render_template("landing.html")
+
+@app.route("/menu")
+def public_menu():
+    """Menu pubblico di esempio."""
     db = get_db()
     categories = db.execute(
         "SELECT * FROM categories ORDER BY sort_order, name"
@@ -363,11 +368,6 @@ def index():
         if items:
             items_by_cat[cat["id"]] = items
     return render_template("public_menu.html", categories=categories, items_by_cat=items_by_cat)
-
-@app.route("/progetto")
-def landing():
-    """Landing page del progetto: versione free, assistenza, versione gold."""
-    return render_template("landing.html")
 
 # ─── Auth Routes ─────────────────────────────────────────────────────────────
 

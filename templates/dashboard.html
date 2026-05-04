@@ -108,7 +108,7 @@
         <a href="{{ url_for('menu_item_create') }}" class="btn btn-primary">+ Nuovo Piatto</a>
         <a href="{{ url_for('tables_list') }}" class="btn btn-primary">🪑 Gestisci Tavoli</a>
         <a href="{{ url_for('orders_list') }}" class="btn btn-primary">📋 Vedi Ordini</a>
-        <a href="{{ url_for('index') }}" class="btn btn-outline">👁 Vedi Menu Pubblico</a>
+        <a href="{{ url_for('public_menu') }}" class="btn btn-outline">👁 Vedi Menu Pubblico</a>
         {% if current_user.role == 'admin' %}
             <a href="{{ url_for('user_create') }}" class="btn btn-secondary">+ Nuovo Utente</a>
             <form action="{{ url_for('orders_end_of_day') }}" method="post"
