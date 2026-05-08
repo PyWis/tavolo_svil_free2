@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Tavolò - Web App per la gestione del menu di un ristorante.
-Al primo avvio viene richiesto di creare l'utente admin da CLI.
+Al primo avvio (anche via WSGI) crea automaticamente l'utente admin/admin
+se non esiste ancora alcun amministratore. Cambia la password appena entri.
 """
 
 import os
@@ -955,7 +956,25 @@ def orders_archive_daily():
     flash(f"Archiviazione completata: {deleted} ordini salvati in {filename}.", "success")
     return redirect(url_for("orders_list"))
 
-# ─── CLI First-Run Setup ────────────────────────────────────────────────────
+# ─── First-Run Setup ────────────────────────────────────────────────────────
+
+def _seed_default_admin():
+    """Crea admin/admin al primo avvio se non esiste alcun utente admin.
+
+    Funziona sia da CLI che da WSGI (es. PythonAnywhere).
+    La password di default non rispetta la policy — l'utente deve cambiarla
+    subito dopo il primo accesso.
+    """
+    db = sqlite3.connect(DB_PATH)
+    admin = db.execute("SELECT id FROM users WHERE role = 'admin'").fetchone()
+    if not admin:
+        db.execute(
+            "INSERT INTO users (username, password_hash, role) VALUES (?, ?, 'admin')",
+            ("admin", generate_password_hash("admin"))
+        )
+        db.commit()
+    db.close()
+
 
 def cli_setup():
     """Create admin user on first run."""
@@ -997,10 +1016,15 @@ def cli_setup():
     print(f"\n  ✅ Admin '{username}' creato con successo!")
     print("=" * 55 + "\n")
 
+# ─── Module-level init (CLI + WSGI) ─────────────────────────────────────────
+# Viene eseguito al caricamento del modulo: funziona sia con `python app.py`
+# che con WSGI (gunicorn / PythonAnywhere uWSGI).
+init_db()
+_seed_default_admin()
+
 # ─── Run ─────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    init_db()
     cli_setup()
     # Default sicuri: bind locale + debug OFF. Per LAN/produzione usare un WSGI
     # server (gunicorn/uwsgi) dietro reverse proxy TLS e sovrascrivere con env.
